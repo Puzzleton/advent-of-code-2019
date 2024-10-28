@@ -180,6 +180,6 @@ console.log(
 );
 
 console.log(
-  "Part 2:"
+  "Part 2:",
   minimumDistance
 );
