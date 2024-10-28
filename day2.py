@@ -3,6 +3,7 @@ input = '1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,6,1,19,2,19,9,23,1,23,5,27,2,6,27,31,
 inputList = input.split(',')
 
 output = [int(inputString) for inputString in inputList]
+
 output[1] = 53
 output[2] = 98
 
