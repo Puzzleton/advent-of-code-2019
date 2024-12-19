@@ -30,31 +30,29 @@ def opcode4(position):
 def opcode5(a, b):
   global globalPosition
   # jump-if-true: if the first parameter (a) is non-zero, it sets the instruction pointer (globalPosition) to the value from the second parameter (b). Otherwise, it increments the instruction pointer by 3.
-  if a == 0:
+  if output[a] == 0:
     globalPosition += 3
   else:
-    globalPosition = b
+    globalPosition = output[b]
 
 def opcode6(a, b):
   global globalPosition
   # jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it increments the instruction pointer by 3.
-  if a == 0:
-    globalPosition = b
+  if output[a] == 0:
+    globalPosition = output[b]
   else:
     globalPosition += 3
 
 def opcode7(a, b, position):
-  print("opcode7: ",a, b, position)
   # less than: if the first parameter (a) is less than the second parameter (b), it stores `1` in the position given by the third parameter. Otherwise, it stores `0`.
-  if a < b:
+  if output[a] < output[b]:
     output[position] = 1
   else:
     output[position] = 0
 
 def opcode8(a, b, position):
-  print("opcode8: ",a, b, position)
   # equals: if the first parameter is equal to the second parameter, it stores `1` in the position given by the third parameter. Otherwise, it stores `0`.
-  if a == b:
+  if output[a] == output[b]:
     output[position] = 1
   else:
     output[position] = 0
@@ -76,7 +74,6 @@ while globalPosition < len(output):
   opcode = "{:05d}".format(output[globalPosition])
   modes = opcode[:3]
   opcode = opcode[-2:]
-  print(globalPosition, modes, opcode + "\n", output)
   
   if opcode == '01':
     opcode1(*getParameterValues(modes, globalPosition + 1, globalPosition + 2, globalPosition + 3))
@@ -91,15 +88,14 @@ while globalPosition < len(output):
     opcode4(*getParameterValues(modes, globalPosition + 1))
     globalPosition += 2
   elif opcode == '05':
-    # TODO: Why do we need output[] here, but not for other opcodes???
-    opcode5(*getParameterValues(modes, output[globalPosition + 1], output[globalPosition + 2]))
+    opcode5(*getParameterValues(modes, globalPosition + 1, globalPosition + 2))
   elif opcode == '06':
-    opcode6(*getParameterValues(modes, output[globalPosition + 1], output[globalPosition + 2]))
+    opcode6(*getParameterValues(modes, globalPosition + 1, globalPosition + 2))
   elif opcode == '07':
-    opcode7(*getParameterValues(modes, output[globalPosition + 1], output[globalPosition + 2], output[globalPosition + 3]))
+    opcode7(*getParameterValues(modes, globalPosition + 1, globalPosition + 2, globalPosition + 3))
     globalPosition += 4
   elif opcode == '08':
-    opcode8(*getParameterValues(modes, output[globalPosition + 1], output[globalPosition + 2], output[globalPosition + 3]))
+    opcode8(*getParameterValues(modes, globalPosition + 1, globalPosition + 2, globalPosition + 3))
     globalPosition += 4
   elif opcode == '99':
     print(output)
