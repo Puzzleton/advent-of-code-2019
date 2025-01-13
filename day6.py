@@ -900,6 +900,17 @@ def findOrDefault(list, valueToFind, fieldName, default = None):
       return item
   return default
 
+def getOrbitCountForPlanet(planet):
+  if planet.orbiting:
+    return getOrbitCountForPlanet(planet.orbiting) + 1
+  return 0
+
+def getOrbitCountForMap(map):
+  total = 0
+  for planet in map.planets:
+    total += getOrbitCountForPlanet(planet)
+  return total
+
 class Planet:
   def __init__(self, name, orbiting = None):
     self.name = name
@@ -922,6 +933,8 @@ class OrbitMap:
     # find the planet in self.planets that matches name
     foundPlanet = findOrDefault(map.planets, name, 'name')
     if foundPlanet is not None:
+      if orbiting is not None:
+        foundPlanet.orbiting = orbiting
       return foundPlanet
     else:
       newPlanet = Planet(name, orbiting)
@@ -933,20 +946,27 @@ class OrbitMap:
     self.findOrCreatePlanet(satelliteName, parentBody)
 
 map = OrbitMap()
-map.addOrbitToMap("COM", "B")
-map.addOrbitToMap("B", "C")
-map.addOrbitToMap("C", "D")
-map.addOrbitToMap("D", "E")
-map.addOrbitToMap("E", "F")
-map.addOrbitToMap("B", "G")
-map.addOrbitToMap("G", "H")
-map.addOrbitToMap("D", "I")
-map.addOrbitToMap("E", "J")
-map.addOrbitToMap("J", "K")
-map.addOrbitToMap("K", "L")
+####         TEST DATA          ####
+# map.addOrbitToMap("COM", "B")
+# map.addOrbitToMap("B", "C")
+# map.addOrbitToMap("C", "D")
+# map.addOrbitToMap("D", "E")
+# map.addOrbitToMap("E", "F")
+# map.addOrbitToMap("B", "G")
+# map.addOrbitToMap("G", "H")
+# map.addOrbitToMap("D", "I")
+# map.addOrbitToMap("E", "J")
+# map.addOrbitToMap("J", "K")
+# map.addOrbitToMap("K", "L")
 
-# TODO: We need to parse our input and create the orbit map
-# TODO: We need to add an orbit counting function to the planet
-# TODO: We need to add an orbit counting function to the map
+# We parse our input and create the orbit map
+# String -> List of Strings (split on new line character)
+inputList = input.split('\n')
 
-print(map)
+# Loop through each string in the list
+for index in range(0, len(inputList)):
+  newOrbitAsString = inputList[index]
+  newOrbitAsList = newOrbitAsString.split(')')
+  map.addOrbitToMap(newOrbitAsList[0], newOrbitAsList[1])
+
+print(getOrbitCountForMap(map))
