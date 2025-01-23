@@ -894,6 +894,45 @@ X3Z)HGT
 FVW)8R4
 XYX)6ZQ'''
 
+### TEST DATA ###
+# input = '''COM)B
+# B)C
+# C)D
+# D)E
+# E)F
+# B)G
+# G)H
+# D)I
+# E)J
+# J)K
+# K)L
+# K)YOU
+# I)SAN'''
+### EXPECTED NUMBER OF TRANSFERS = 4
+
+def buildPath(santasOrbitChain, myOrbitChain):
+  pathToSanta = []
+  for planetName in santasOrbitChain:
+    if planetName in myOrbitChain:
+      # planetName = our earliest common ancestor
+      indexOfCommonAncestor = myOrbitChain.index(planetName)
+      initialPath = myOrbitChain[0:indexOfCommonAncestor + 1]
+      pathToSanta.reverse()
+      initialPath.extend(pathToSanta)
+      # remove "SAN" from the end of the list
+      # remove "YOU" and immediate orbit from the list
+      return initialPath[2:-1]
+    else:
+      pathToSanta.append(planetName)
+
+def buildOrbitChain(orbitMap, startingPoint):
+  chain = []
+  currentPlanet = orbitMap.findOrCreatePlanet(startingPoint)
+  while currentPlanet.orbiting is not None:
+    chain.append(currentPlanet.name)
+    currentPlanet = currentPlanet.orbiting
+  return chain
+
 def findOrDefault(list, valueToFind, fieldName, default = None):
   for item in list:
     if item[fieldName] == valueToFind:
@@ -946,18 +985,6 @@ class OrbitMap:
     self.findOrCreatePlanet(satelliteName, parentBody)
 
 map = OrbitMap()
-####         TEST DATA          ####
-# map.addOrbitToMap("COM", "B")
-# map.addOrbitToMap("B", "C")
-# map.addOrbitToMap("C", "D")
-# map.addOrbitToMap("D", "E")
-# map.addOrbitToMap("E", "F")
-# map.addOrbitToMap("B", "G")
-# map.addOrbitToMap("G", "H")
-# map.addOrbitToMap("D", "I")
-# map.addOrbitToMap("E", "J")
-# map.addOrbitToMap("J", "K")
-# map.addOrbitToMap("K", "L")
 
 # We parse our input and create the orbit map
 # String -> List of Strings (split on new line character)
@@ -969,4 +996,7 @@ for index in range(0, len(inputList)):
   newOrbitAsList = newOrbitAsString.split(')')
   map.addOrbitToMap(newOrbitAsList[0], newOrbitAsList[1])
 
-print(getOrbitCountForMap(map))
+path = buildPath(buildOrbitChain(map,"SAN"), buildOrbitChain(map,"YOU"))
+
+print(path)
+print(len(path))
